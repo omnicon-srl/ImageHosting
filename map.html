@@ -1,0 +1,150 @@
+<div class='card'>
+    <div>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <style>.body { height: 100%;} .map { height: 100%; width: 100%; } </style>
+    </div>
+    <div style="padding-bottom:10px">Mappa dispositivi</div>
+    <div class="body">
+        <div id="map" class="map"></div>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script>
+            (function(root, factory) {
+                if (typeof define === 'function' && define.amd) {define(['leaflet'], factory);} 
+                else if (typeof modules === 'object' && module.exports) {module.exports = factory(require('leaflet'));} 
+                else {factory(L);}
+            }(this, function(L) {
+                'use strict';
+
+            L.TileLayer.Provider=L.TileLayer.extend({initialize:function(i,t){var r=L.TileLayer.Provider.providers,o=i.split("."),n=o[0],i=o[1];if(!r[n])throw"No such provider ("+n+")";o={url:r[n].url,options:r[n].options};if(i&&"variants"in r[n]){if(!(i in r[n].variants))throw"No such variant of "+n+" ("+i+")";n=r[n].variants[i],i="string"==typeof n?{variant:n}:n.options,o={url:n.url||o.url,options:L.Util.extend({},o.options,i)}}var e=function(i){return-1===i.indexOf("{attribution.")?i:i.replace(/\{attribution.(\w*)\}/g,function(i,t){return e(r[t].options.attribution)})};o.options.attribution=e(o.options.attribution);t=L.Util.extend({},o.options,t);L.TileLayer.prototype.initialize.call(this,o.url,t)}});
+
+                L.TileLayer.Provider.providers = {
+                OpenStreetMap: {
+                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    options: {minZoom: 3,maxZoom: 19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'},
+                    variants: {Mapnik: {},DE: {url: 'https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',options: {maxZoom: 18}},}
+                },
+                GoogleMaps: {
+                    url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                    options: {minZoom: 3,maxZoom: 19,subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],attribution:'&copy; <a href="https://about.google/brand-resource-center/products-and-services/geo-guidelines/">Google Maps</a>'},
+                    variants: {
+                        Streets: {url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',options: {maxZoom: 19}},
+                        Hybrid: {url: 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',options: {maxZoom: 19}},
+                        Satellite: {url: 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',options: {maxZoom: 19}
+                        },
+                    }
+                },
+                CartoDB: {
+                    url: 'https://{s}.basemaps.cartocdn.com/{variant}/{z}/{x}/{y}{r}.png',
+                    options: {
+                        attribution: '{attribution.OpenStreetMap} &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                        subdomains: 'abcd',
+                        maxZoom: 20,
+                        variant: 'light_all'
+                    },
+                    variants: {
+                        Positron: 'light_all',
+                        PositronNoLabels: 'light_nolabels',
+                        PositronOnlyLabels: 'light_only_labels',
+                        DarkMatter: 'dark_all',
+                        DarkMatterNoLabels: 'dark_nolabels',
+                        DarkMatterOnlyLabels: 'dark_only_labels',
+                        Voyager: 'rastertiles/voyager',
+                        VoyagerNoLabels: 'rastertiles/voyager_nolabels',
+                        VoyagerOnlyLabels: 'rastertiles/voyager_only_labels',
+                        VoyagerLabelsUnder: 'rastertiles/voyager_labels_under'
+                    }
+                },
+                Stamen: {
+                    url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/{variant}/{z}/{x}/{y}{r}.{ext}',
+                    options: {
+                        attribution:
+                            'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
+                            '<a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; ' +
+                            'Map data {attribution.OpenStreetMap}',
+                        subdomains: 'abcd',
+                        minZoom: 0,
+                        maxZoom: 20,
+                        variant: 'toner',
+                        ext: 'png'
+                    },
+                    variants: {Toner: 'toner',}
+                },
+                OpenWeatherMap: {
+                    url: 'http://{s}.tile.openweathermap.org/map/{variant}/{z}/{x}/{y}.png?appid={apiKey}',
+                    options: {
+                        minZoom: 3,
+                        maxZoom: 19,
+                        attribution: 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
+                        apiKey: '0e1e87f7dad2414965f76a3c9bf1f892',
+                        opacity: 0.5
+                    },
+                    variants: {Clouds: 'clouds',CloudsClassic: 'clouds_cls',Precipitation: 'precipitation',PrecipitationClassic: 'precipitation_cls',Rain: 'rain',RainClassic: 'rain_cls',Pressure: 'pressure',PressureContour: 'pressure_cntr',Wind: 'wind',Temperature: 'temp',Snow: 'snow'}
+                },
+            };
+            L.tileLayer.provider = function(provider, options) {return new L.TileLayer.Provider(provider, options);};
+            return L;
+            }));
+        </script>
+
+        <script>
+            //MAP INITIALIZE
+            var map = L.map("map", {center: [44.91128, 10.993324],zoom: 9,zoomControl: !0});  
+            
+            /*----- MAP CONTENT DEFINITION -----*/
+            var sense1 = ['AIMAG S202000224', 44.91128, 10.993324, 'https://level4.omnicon.it/customerGroups/2be92500-6f83-11ea-a1f6-1514b35bb24a/0583ad00-484d-11ec-80e3-1d188e083f24/dashboardGroups/0589ee90-484d-11ec-80e3-1d188e083f24/b7c94c90-4910-11ec-80e3-1d188e083f24?state=W3siaWQiOiJob21lIiwicGFyYW1zIjp7ImVudGl0eUlkIjp7ImlkIjoiMDJkN2FkODAtNGI4Ny0xMWVjLTgwZTMtMWQxODhlMDgzZjI0IiwiZW50aXR5VHlwZSI6IkRFVklDRSJ9LCJlbnRpdHlOYW1lIjoiQUlNQUcgUzIwMjAwMDIyNCIsImVudGl0eUxhYmVsIjoiQUlNQUcgUzIwMjAwMDIyNCJ9fSx7ImlkIjoiZGV0dGFnbGlvIiwicGFyYW1zIjp7ImVudGl0eUlkIjp7ImlkIjoiMDJkN2FkODAtNGI4Ny0xMWVjLTgwZTMtMWQxODhlMDgzZjI0IiwiZW50aXR5VHlwZSI6IkRFVklDRSJ9LCJlbnRpdHlOYW1lIjoiQUlNQUcgUzIwMjAwMDIyNCJ9fV0%253D'];
+            var arraySense = [sense1, ];
+            for (let i = 0; i < arraySense.length; i++) {
+                var popupContent = "<b>" + (arraySense[i])[0] + "</b><br><b>Latitudine: </b>" + (arraySense[i])[1] + "<br><b>Longitudine: </b>" + (arraySense[i])[2];
+                if ((arraySense[i])[3] != '')
+                    popupContent += "<br><a href='" + (arraySense[i])[3] + "'>Pagina Dettaglio</a>";
+                var markerIcon = L.icon({
+                    iconUrl: 'https://i.ibb.co/NxXtL8W/download.png',
+                    shadowUrl: 'https://i.ibb.co/3NWBDFG/download.png',
+                    iconSize: [30, 35], 
+                    shadowSize: [30, 32],
+                    iconAnchor: [15, 34],
+                    shadowAnchor: [2, 30],
+                    popupAnchor: [0, -38]
+                });
+                var marker = L.marker([(arraySense[i])[1], (arraySense[i])[2]], {
+                    icon: markerIcon
+                }).addTo(map).bindPopup(popupContent);
+            }
+            /*----- END OF MAP CONTENT DEFINITION -----*/
+            
+            /*----- MAP LAYERS CONFIGURATION -----*/
+            var defaultLayer = L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
+            var baseLayers = {
+                'OpenStreetMap Default': defaultLayer,
+                'OpenStreetMap German Style': L.tileLayer.provider('OpenStreetMap.DE'),
+                'Google Maps': L.tileLayer.provider('GoogleMaps.Streets'),
+                'Google Hybrid': L.tileLayer.provider('GoogleMaps.Hybrid'),
+                'Google Satellite': L.tileLayer.provider('GoogleMaps.Satellite'),
+                'CartoDB DarkMatter': L.tileLayer.provider('CartoDB.DarkMatter'),
+                'Stamen Toner': L.tileLayer.provider('Stamen.Toner'),
+            };
+            var overlayLayers = {
+                'Clouds': L.tileLayer.provider('OpenWeatherMap.CloudsClassic'),
+                'Precipitation': L.tileLayer.provider('OpenWeatherMap.PrecipitationClassic'),
+                'Rain': L.tileLayer.provider('OpenWeatherMap.RainClassic'),
+                'Pressure': L.tileLayer.provider('OpenWeatherMap.Pressure'),
+                'Pressure Contour': L.tileLayer.provider('OpenWeatherMap.PressureContour'),
+                'Wind': L.tileLayer.provider('OpenWeatherMap.Wind'),
+                'Temperature': L.tileLayer.provider('OpenWeatherMap.Temperature'),
+                'Snow': L.tileLayer.provider('OpenWeatherMap.Snow'),
+            };
+            L.control.layers(baseLayers, overlayLayers, "Test", {
+                collapsed: false
+            }).addTo(map);
+            function resizeLayerControl() {
+                var layerControlHeight = document.body.clientHeight - (10 + 50);
+                var layerControl = document.getElementsByClassName('leaflet-control-layers-expanded')[0];
+                layerControl.style.overflowY = 'auto';
+                layerControl.style.maxHeight = layerControlHeight + 'px';
+            }
+            map.on('resize', resizeLayerControl);
+            resizeLayerControl();
+            /*----- END OF MAP LAYERS CONFIGURATION -----*/
+        </script>
+    </div>
+</div>

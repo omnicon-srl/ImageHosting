@@ -1,0 +1,18 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 195.66 195.66">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke: #3aaa35;
+        stroke-miterlimit: 10;
+        stroke-width: 22px;
+      }
+
+      .cls-2 {
+        fill: #00983a;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="97.83" cy="97.83" r="86.83"/>
+  <path class="cls-2" d="M72.85,60.07,140,99.27,72.85,139.93Z" transform="translate(-2.17 -2.17)"/>
+</svg>
